@@ -1,4 +1,4 @@
 Flask==2.3.2
 python-dotenv==1.0.0
 gunicorn==21.2.0
-groq==0.1.5  # replace with the actual version you installed locally
+groq==0.31.1  # replace with the actual version you installed locally
