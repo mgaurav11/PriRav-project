@@ -1,0 +1,477 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chatbot</title>
+  <style>
+    /* CSS Variables for dark/light mode */
+    :root {
+      --bg-color: #b1a4a6ff;
+      --chat-bg: #864a4aa2;
+      --footer-bg: #d3d3d3;
+      --user-text: #000;
+      --bot-text: #000;
+      --title-color: #222;
+      --send-btn-bg: #007bff;
+      --send-btn-hover: #0056b3;
+    }
+body.dark-mode {
+  --bg-color: #868484ff;        /* page background black */
+  --chat-bg: #333333;         /* chat box grey */
+  --footer-bg: #444444;       /* footer slightly lighter grey */
+  --user-text: #ffffff;       /* user font color */
+  --bot-text: #ffffff;        /* bot font color */
+  --title-color: #ffffff;     /* app title color */
+  --send-btn-bg: #1e90ff;     /* send button */
+  --send-btn-hover: #104e8b;
+}
+
+body.dark-mode #user-input {
+  background: #555555;       /* input background in dark mode */
+  color: #fff;
+}
+
+  body {
+  font-family: Georgia, serif;
+  background-color: var(--bg-color);
+  background-image: url('/static/image.png'); /* your image file */
+  background-size: cover;        /* cover entire screen */
+  background-position: center;   /* center the image */
+  background-repeat: no-repeat;
+  background-attachment: fixed;  /* optional, for parallax effect */
+  color: var(--title-color);
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+body.dark-mode {
+  background-image: url('/static/dd.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1; /* behind everything */
+}
+
+body.dark-mode::before {
+  background-color: rgba(0,0,0,0.2); /* darker overlay for dark mode */
+}
+
+/* Dark mode adjustments */
+/*body.dark-mode {
+  /*background-color: #000;
+  background-image: url('background.jpg'); /* same image, can be swapped to a dark version if you want 
+}
+
+body.dark-mode::before {
+  background-color: rgba(0,0,0,0.6); /* darker overlay for dark mode 
+}*/
+
+    /* Header */
+    .header {
+      width: 100%;
+      display: flex;
+      justify-content: center; 
+      align-items: center;
+      position: relative;
+      margin-bottom: 10px;
+    }
+
+    #app-title {
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    /* Dark mode toggle */
+    #dark-mode-toggle {
+      position: absolute;
+      right: 20px;
+      top: 0;
+      cursor: pointer;
+      padding: 5px 10px;
+      font-size: 22px;
+      border: none;
+      border-radius: 5px;
+      background-color: var(--footer-bg);
+      color: var(--title-color);
+      transition: transform 0.5s ease, background-color 0.3s, color 0.3s;
+    }
+
+    #dark-mode-toggle.rotate {
+      transform: rotate(360deg);
+    }
+
+    /* Chatbox */
+    .chat-box {
+      width: 80%;
+      max-width: 700px;
+      height: 90vh;
+      display: flex;
+      flex-direction: column;
+      border-radius: 15px;
+      overflow: hidden;
+      background-color: var(--chat-bg);
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+    }
+
+    .chat-messages {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* User messages */
+    .user-msg {
+      margin-left: auto;
+      flex-direction: row-reverse;
+    }
+
+    .user-msg span {
+      color: var(--user-text);
+      border-bottom-right-radius: 5px;
+      font-family: Garamond, serif;
+      font-weight: bold;
+      /*font-style: italic;*/
+      font-size: 20px;
+    }
+
+    .user-icon {
+      margin-left: 8px;
+      font-size: 22px;
+      color: #555;
+    }
+
+    /* Bot messages */
+    .bot-msg {
+      margin-right: auto;
+      flex-direction: row;
+    }
+
+    .bot-msg span {
+      color: var(--bot-text);
+      border-bottom-left-radius: 5px;
+      font-family: Garamond, serif; /* bot font */
+      font-weight: bold;
+      font-size: 20px;
+    }
+
+    .bot-icon {
+      margin-right: 8px;
+      font-size: 22px;
+      color: #32cd32;
+    }
+
+    /* Copy/Edit buttons */
+    .msg-actions {
+  display: inline-flex;
+  gap: 5px;
+  margin-left: 10px;
+}
+
+.msg-actions button {
+  font-size: 14px;
+  padding: 2px 6px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  /*background-color: #007bff;*/
+  /*color: white;*/
+  transition: background-color 0.2s;
+}
+
+.msg-actions button:hover {
+ background-color: #0056b3;
+}
+
+    /* Footer */
+    .chat-footer {
+      display: flex;
+      align-items: center;
+      padding: 15px;
+      background-color: var(--footer-bg);
+      border-top: 1px solid #aaa;
+    }
+
+    #user-input {
+      flex: 1;
+      border-radius: 20px;
+      padding: 12px 15px;
+      border: none;
+      outline: none;
+      font-size: 14px;
+      background: #fff;
+      color: #000;
+    }
+
+    body.dark-mode #user-input {
+      background: #555;
+      color: #fff;
+    }
+
+    .send-btn {
+      margin-left: 10px;
+      background-color: var(--send-btn-bg);
+      border: none;
+      border-radius: 50%;
+      width: 45px;
+      height: 45px;
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .send-btn:hover {
+      background-color: var(--send-btn-hover);
+    }
+
+    .social-bar {
+      position: fixed;
+      left: 20px; 
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      z-index: 1000;
+    }
+
+    .social-icon {
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background-color: var(--chat-bg);
+      color: var(--title-color);
+      border-radius: 50%;
+      text-decoration: none;
+      transition: transform 0.3s, background-color 0.3s;
+      position: relative;
+    }
+
+    .social-icon:hover {
+      transform: scale(1.2) rotate(10deg);
+      background-color: var(--send-btn-bg);
+      color: #fff;
+    }
+
+    .social-icon::after {
+      content: attr(title);
+      position: absolute;
+      left: 50px;   
+      background-color: #222;
+      color: #fff;
+      padding: 2px 8px;
+      border-radius: 5px;
+      opacity: 0;
+      white-space: nowrap;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+
+    .social-icon:hover::after {
+      opacity: 1;
+    }
+
+    .typing span {
+      display: inline-flex;
+      gap: 4px;
+    }
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      background-color: var(--bot-text);
+      border-radius: 50%;
+      animation: blink 1.4s infinite both;
+    }
+
+    .dot:nth-child(1) { animation-delay: 0s; }
+    .dot:nth-child(2) { animation-delay: 0.2s; }
+    .dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes blink {
+      0%, 80%, 100% { opacity: 0; }
+      40% { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="header">
+    <span id="app-title">PriRav</span>
+    <button id="dark-mode-toggle" class="toggle-btn">🌙</button>
+  </div>
+
+  <div class="chat-box">
+    <div class="chat-messages" id="chat-box"></div>
+
+    <div class="chat-footer">
+      <input id="user-input" type="text" placeholder="Type a message..." />
+      <button onclick="sendMessage()" class="send-btn">➤</button>
+    </div>
+  </div>
+
+  <!-- <div class="social-bar">
+    <a href="https://mail.google.com/mail/?view=cm&to=your-msaigaurav1@gmail.com&su=Hello&body=Hi there!" target="_blank" class="social-icon" title="Email">✉️</a>
+    <a href="https://leetcode.com/u/Gaurav_sai/" target="_blank" class="social-icon" title="LeetCode">🧩</a>
+    <a href="https://www.linkedin.com/in/m-sai-gaurav" target="_blank" class="social-icon" title="LinkedIn">💼</a>
+    <a href="https://github.com/mgaurav11" target="_blank" class="social-icon" title="GitHub">🐙</a>
+  </div> -->
+
+  <!-- Social Icons Left Middle -->
+<div class="social-bar">
+  <!-- Email -->
+  <a href="https://mail.google.com/mail/?view=cm&to=your-msaigaurav1@gmail.com&su=Hello&body=Hi there!" target="_blank" class="social-icon" title="Email">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 0 0 2.22 0L21 8m0 0v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8m18 0L12 13 3 8"/>
+    </svg>
+  </a>
+
+
+  <!-- LinkedIn -->
+  <a href="https://www.linkedin.com/in/m-sai-gaurav" target="_blank" class="social-icon" title="LinkedIn">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" width="24" height="24">
+      <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.762 2.239 5 5 5h14c2.762 0 5-2.238 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-10h3v10zm-1.5-11.25c-.966 0-1.75-.785-1.75-1.75s.784-1.75 1.75-1.75 1.75.785 1.75 1.75-.784 1.75-1.75 1.75zm13.5 11.25h-3v-5c0-1.378-1.122-2.5-2.5-2.5s-2.5 1.122-2.5 2.5v5h-3v-10h3v1.445c.729-1.065 2.015-1.445 3.25-1.445 2.481 0 4.5 2.019 4.5 4.5v5z"/>
+    </svg>
+  </a>
+
+  <!-- GitHub -->
+  <a href="https://github.com/mgaurav11" target="_blank" class="social-icon" title="GitHub">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" width="24" height="24">
+      <path d="M12 .5c-6.627 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.387.6.111.82-.261.82-.577v-2.234c-3.338.726-4.033-1.415-4.033-1.415-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.085 1.84 1.237 1.84 1.237 1.07 1.834 2.809 1.304 3.495.997.108-.775.418-1.304.762-1.604-2.665-.303-5.467-1.333-5.467-5.933 0-1.31.468-2.381 1.236-3.221-.124-.303-.536-1.523.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.289-1.552 3.295-1.23 3.295-1.23.656 1.653.244 2.873.12 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.625-5.479 5.921.43.372.814 1.102.814 2.222v3.293c0 .319.216.694.825.576 4.765-1.589 8.2-6.084 8.2-11.386 0-6.627-5.373-12-12-12z"/>
+    </svg>
+  </a>
+
+  <a href="https://leetcode.com/u/Gaurav_sai/" target="_blank" class="social-icon" title="LeetCode">
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M16 18l6-6-6-6M8 6l-6 6 6 6"/>
+  </svg>
+</a>
+</div>
+
+
+
+  <script>
+    const chatDiv = document.getElementById("chat-box");
+    const inputBox = document.getElementById("user-input");
+    const toggleBtn = document.getElementById("dark-mode-toggle");
+
+    // Dark mode toggle with animation
+    toggleBtn.addEventListener("click", function() {
+      toggleBtn.classList.add("rotate");
+      setTimeout(() => toggleBtn.classList.remove("rotate"), 500);
+      document.body.classList.toggle("dark-mode");
+      toggleBtn.textContent = document.body.classList.contains("dark-mode") ? "☀️" : "🌙";
+    });
+
+    // Send message
+    async function sendMessage() {
+      let userInput = inputBox.value.trim();
+      if (!userInput) return;
+
+      // User message
+      chatDiv.innerHTML += `
+        <div class="message user-msg">
+          <span>${userInput.replace(/\n/g,"<br>")}</span>
+          <div class="user-icon">👤</div>
+          <div class="msg-actions">
+            <button onclick="editMessage(this)">✏️</button>
+          </div>
+        </div>`;
+      chatDiv.scrollTop = chatDiv.scrollHeight;
+
+      // Typing indicator
+      let typingDiv = document.createElement("div");
+      typingDiv.classList.add("message","bot-msg","typing");
+      typingDiv.innerHTML = `<div class="bot-icon">🤖</div><span><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>`;
+      chatDiv.appendChild(typingDiv);
+      chatDiv.scrollTop = chatDiv.scrollHeight;
+
+      // Backend fetch
+      let response = await fetch("/chat", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({message:userInput})
+      });
+      let data = await response.json();
+
+      // Remove typing dots
+      typingDiv.remove();
+
+      // Bot message container
+      let botMsgDiv = document.createElement("div");
+      botMsgDiv.className = "message bot-msg";
+      botMsgDiv.innerHTML = `
+        <div class="bot-icon">🤖</div>
+        <span></span>
+        <div class="msg-actions">
+          <button onclick="copyMessage(this)">📋</button>
+        </div>`;
+      chatDiv.appendChild(botMsgDiv);
+      chatDiv.scrollTop = chatDiv.scrollHeight;
+
+      // Typewriter effect
+      typeWriter(data.reply, botMsgDiv.querySelector("span"));
+      inputBox.value = "";
+    }
+
+    // Typewriter
+    function typeWriter(text, element, delay=30){
+      element.innerHTML = "";
+      let i=0;
+      let timer = setInterval(()=>{
+        element.innerHTML += text.charAt(i);
+        i++;
+        chatDiv.scrollTop = chatDiv.scrollHeight;
+        if(i>=text.length) clearInterval(timer);
+      }, delay);
+    }
+
+    // Copy message
+    function copyMessage(btn){
+      let text = btn.parentElement.querySelector("span").innerText;
+      navigator.clipboard.writeText(text);
+    }
+
+    // Edit user message
+    function editMessage(btn){
+      let text = btn.parentElement.parentElement.querySelector("span").innerText;
+      inputBox.value = text;
+      inputBox.focus();
+    }
+
+    // Enter key to send
+    inputBox.addEventListener("keydown", function(event){
+      if(event.key === "Enter" && !event.shiftKey){
+        event.preventDefault();
+        sendMessage();
+      }
+    });
+  </script>
+</body>
+</html>
